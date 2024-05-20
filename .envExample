@@ -1,0 +1,8 @@
+# DB_USER=jawadSocailmediaa
+# DB_PASSWORD =jawadSocailMediaPassword || jawadSocailmediaa
+# DB_URL=mongodb+srv://jawadSocailmediaa:${DB_PASSWORD}@socailmediacluster.zcavh7i.mongodb.net/social?retryWrites=true&w=majority&appName=SocailMediaCluster
+
+# DB_NAME=social
+
+
+# MONGO_URL=mongodb+srv://jawadSocailmediaa:<password>@socailmediacluster.zcavh7i.mongodb.net/social?retryWrites=true&w=majority&appName=SocailMediaCluster
