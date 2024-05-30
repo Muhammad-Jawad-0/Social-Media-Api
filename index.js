@@ -1,33 +1,63 @@
-import express from "express";
-import mongoose from "mongoose";
-import dotenv from "dotenv";
-import helmet from "helmet";
-import morgan from "morgan";
-import userRoute from "./routes/users.js"
-import authRoute from "./routes/auth.js"
-import postRoute from "./routes/Posts.js"
-
+const express = require("express");
 const app = express();
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const helmet = require("helmet");
+const morgan = require("morgan");
+const multer = require("multer");
+const userRoute = require("./routes/users");
+const authRoute = require("./routes/auth");
+const postRoute = require("./routes/posts");
+const router = express.Router();
+const path = require("path");
+
 dotenv.config();
 
-// mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@socailmediacluster.zcavh7i.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority&appName=SocailMediaCluster`)
+// mongoose.connect(
+//   process.env.DB_URL,
+//   { useNewUrlParser: true, useUnifiedTopology: true },
+//   () => {
+//     console.log("Connected to MongoDB");
+//   }
+// );
+
 mongoose.connect(process.env.DB_URL) // ye bhi kr sakhte ha
 
 mongoose.connection.on("connected", () => {
     console.log(" ----- connected mongodb -----")
 })
 
+
+
+app.use("/images", express.static(path.join(__dirname, "public/images")));
+
 //middleware
+app.use(express.json());
+app.use(helmet());
+app.use(morgan("common"));
 
-app.use(express.json())
-app.use(helmet())
-app.use(morgan("common"))
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/images");
+  },
+  filename: (req, file, cb) => {
+    cb(null, req.body.name);
+  },
+});
 
+const upload = multer({ storage: storage });
+app.post("/api/upload", upload.single("file"), (req, res) => {
+  try {
+    return res.status(200).json("File uploded successfully");
+  } catch (error) {
+    console.error(error);
+  }
+});
 
-app.use("/api/auth", authRoute)
-app.use("/api/users", userRoute)
-app.use("/api/posts", postRoute)
+app.use("/api/auth", authRoute);
+app.use("/api/users", userRoute);
+app.use("/api/posts", postRoute);
 
-app.listen(5000, () => {
-    console.log("Backend Server Is Running!...")
-})
+app.listen(8800, () => {
+  console.log("Backend server is running!");
+});
